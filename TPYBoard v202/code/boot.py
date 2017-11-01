@@ -8,7 +8,7 @@ if not sta_if.isconnected():
         p2.off()
         print('connecting to network...')
         sta_if.active(True)
-        sta_if.connect('R-LAB', 'micro2.718')
+        sta_if.connect('', '')
         while not sta_if.isconnected():
                 pass
 if sta_if.isconnected():
