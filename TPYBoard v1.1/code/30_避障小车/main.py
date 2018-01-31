@@ -2,18 +2,23 @@ import pyb
 from pyb import UART
 from pyb import Pin
 
-M0 = Pin('X1', Pin.IN)#红外1，右前
-M1 = Pin('X2', Pin.IN)#红外2，右侧45
-M2 = Pin('X3', Pin.IN)#红外3，左侧45
-M3 = Pin('X4', Pin.IN)#红外4，左前
-N1 = Pin('Y1', Pin.OUT_PP)#L298N,IN1,
-N2 = Pin('Y2', Pin.OUT_PP)#L298N,IN2,
-N3 = Pin('Y3', Pin.OUT_PP)#L298N,IN3,
-N4 = Pin('Y4', Pin.OUT_PP)#L298N,IN4,
+#管脚定义
+IR_FrontR = Pin('X1', Pin.IN)#红外1，右前
+IR_Right45 = Pin('X2', Pin.IN)#红外2，右侧45
+IR_LEFT45 = Pin('X3', Pin.IN)#红外3，左侧45
+IR_FrontL = Pin('X4', Pin.IN)#红外4，左前
+left_motor1 = Pin('Y1', Pin.OUT_PP)#L298N,IN1,
+left_motor2 = Pin('Y2', Pin.OUT_PP)#L298N,IN2,
+right_motor1 = Pin('Y3', Pin.OUT_PP)#L298N,IN3,
+right_motor2 = Pin('Y4', Pin.OUT_PP)#L298N,IN4,
 
-print('while')
+
+
+
+
+'''
 while True:
-    print('while')
+
     pyb.LED(4).off()
     pyb.LED(3).off()
     pyb.LED(2).off()
@@ -41,3 +46,4 @@ while True:
         N3.high()
         N4.low()
         pyb.delay(70)
+'''
