@@ -117,6 +117,11 @@ pull 定义端口的上拉或下来电阻，可取值：pyb.Pin.PULL_NONE 无上
 callback 回调函数，只能有一个变量，就是中断行
 '''
 
-
+'''
+开机连接电脑
+left_motor_forward()
+right_motor_forward()
+测试可看到读取的编码器数值
+'''
 
 
