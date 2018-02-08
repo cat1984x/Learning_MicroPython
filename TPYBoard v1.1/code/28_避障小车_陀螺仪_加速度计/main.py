@@ -3,6 +3,7 @@ from pyb import UART
 from pyb import Pin
 from pyb import Timer
 from pyb import ExtInt
+from mpu6050 import MPU6050
 
 import micropython
 micropython.alloc_emergency_exception_buf(100)
@@ -126,8 +127,8 @@ def caculate_speed():
     right_encoder = 0 #编码器清零
     #print("left_rpm=", left_rpm) #USB打印编码器数值
     #print("right_rpm=", right_rpm) #USB打印编码器数值
-    bluetooth.write("left_rpm="+str(left_rpm)+"\r\n") #蓝牙发送编码器数值
-    bluetooth.write("right_rpm="+str(right_rpm)+"\r\n") #蓝牙发送编码器数值
+    #bluetooth.write("left_rpm="+str(left_rpm)+"\r\n") #蓝牙发送编码器数值
+    #bluetooth.write("right_rpm="+str(right_rpm)+"\r\n") #蓝牙发送编码器数值
     extint10.enable() #开启编码器中断
     extint15.enable() #开启编码器中断   
 
@@ -187,21 +188,25 @@ def Right_90():#向右转90度
     Right()
     pyb.delay(700)
     Stop()   
-       
-extint10.disable() #关闭编码器中断
-extint15.disable() #关闭编码器中断
+    
+'''陀螺仪、加速度计'''       
+# MPU
+mpu = MPU6050()
+mpu.dmpInitialize()
+mpu.setDMPEnabled(True)
+packetSize = mpu.dmpGetFIFOPacketSize() 
 
 #主循环程序
 while True:
-
+    #编码器计算速度
     if speed_cotrol_flag:#速度控制标志位置，置为1的时候运行caculate_speed()，每0.5s
         caculate_speed()
         speed_cotrol_flag = 0
-
+    
+    #蓝牙控制行走
     if bluetooth.any()>0:#蓝牙接收数据，控制行走
         data = bluetooth.read().decode()
-        print(data)
-        
+        print(data)        
         if data.find('0')>-1:#0-停车
             Stop()
             print("stop") #USB打印
@@ -221,7 +226,23 @@ while True:
         if data.find('4')>-1:#0-向左
             Right_90()
             print("right")
-            bluetooth.write("right\r\n")  
+            bluetooth.write("right\r\n")           
+            
+    #MPU
+    mpuIntStatus = mpu.getIntStatus()
+    fifoCount = mpu.getFIFOCount()
+    if mpuIntStatus < 2 or fifoCount == 1024:
+        mpu.resetFIFO()
+        print('FIFO overflow!')
+        continue
+    while fifoCount < packetSize:
+        fifoCount = mpu.getFIFOCount()
+    fifoCount -= packetSize
+    fifoBuffer = mpu.getFIFOBytes(packetSize)
+    yaw, rol, pit = mpu.dmpGetEuler(*mpu.dmpGetQuaternion(fifoBuffer))
+    g_pit, g_rol, g_yaw = mpu.dmpGetGyro(fifoBuffer)
+    yaw -= 6
+    print(rol, pit, yaw, g_rol, g_pit, g_yaw)
                               
 '''
 在主循环前开启电机，尝试不同PWM测试速度值
