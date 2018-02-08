@@ -214,11 +214,11 @@ while True:
             Backward()
             print("backward")
             bluetooth.write("backward\r\n")        
-        if data.find('3')>-1:#0-向左
+        if data.find('3')>-1:#3-向左
             Left_90()
             print("left")
             bluetooth.write("left\r\n")
-        if data.find('4')>-1:#0-向左
+        if data.find('4')>-1:#4-向左
             Right_90()
             print("right")
             bluetooth.write("right\r\n")  
